@@ -1,0 +1,68 @@
+.logoimg{
+    width: 220px; 
+    height: 220px;
+    display: block;
+    margin: 23px auto 0;
+    animation: spinLogo 50s linear infinite;
+}
+@keyframes spinLogo {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.auth-bg{
+    background:
+        linear-gradient(
+            rgba(28,35,43,0.92),
+            rgba(28,35,43,0.92)
+        ),
+        url('/stars-bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.auth-logo {
+    width: 180px;
+    margin-bottom: 20px;
+}
+.auth-card{
+    width: 100%;
+    max-width: 700px;
+}
+.dark-title{
+    background-color: #1c232b;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+.customnavbar{
+    background-color: #1c232b;
+    color:white;
+}
+.customfooter{
+    background-color: #1c232b;
+    color:white;
+}
+.customsidebar{
+    background-color: #1c232b;
+    color:black;
+}
+.btn-primary{
+    --bs-btn-bg: #d4af37;
+    --bs-btn-border-color: #d4af37;
+
+    --bs-btn-hover-bg: #b8922c;
+    --bs-btn-hover-border-color: #b8922c;
+
+    --bs-btn-active-bg: #a37f1d;
+    --bs-btn-active-border-color: #a37f1d;
+}
+.active{
+    background-color: #d4af37 !important;
+    color: white !important;
+}
