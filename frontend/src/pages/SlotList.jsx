@@ -39,7 +39,7 @@ function SlotList(){
             <td>{slot.available_date}</td>
             <td>{slot.start_time}</td>
             <td>{slot.end_time}</td>
-            <td>{slot.isbooked==1?'Yes':'No'}</td>
+            <td>{slot.isbooked==1?'Booked':'Available'}</td>
             <td><Button onClick={()=>navigate(`/astro/slot/edit/${slot.id}`)}><i class="fa fa-edit"></i></Button>&nbsp;<Button onClick={()=>handleDelete(slot.id)}><i class="fa fa-trash"></i></Button></td>
         </tr>
     ));

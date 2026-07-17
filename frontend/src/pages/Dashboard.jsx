@@ -25,33 +25,96 @@ function Dashboard(){
     return(
         <>
         <div className="container-fluid">
-        <h2 className="mb-4">Admin Dashboard</h2>
 
-        <div className="col-md-12 mb-4">
+    <h2 className="mb-4 dark-title">
+        Admin Dashboard
+    </h2>
 
-    <div className="card shadow ">
+    <div className="row">
 
-        <div className="card-body">
-
-        <p>Total Customers : {dashboard.totalCustomer}</p>
-
-        <p>Total Astrologers : {dashboard.totalAstrologer}</p>
-
-        <p>Total Services : {dashboard.totalService}</p>
-
-        <p>Total Appointments : {dashboard.totalAppointment}</p>
-
-        <p>Pending : {dashboard.totalpendingappointment}</p>
-
-        <p>Confirmed : {dashboard.totalconfirmedappointment}</p>
-
-        <p>Completed : {dashboard.totalcompletedppointment}</p>
-
-        <p>Cancelled : {dashboard.totalcancelledappointment}</p>
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center dashboard-card">
+                <div className="card-body">
+                    <i className="fa fa-users fa-3x mb-3 text-primary"></i>
+                    <h5>Total Customers</h5>
+                    <h2>{dashboard.totalCustomer}</h2>
+                </div>
+            </div>
         </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-user-md fa-3x mb-3 text-success"></i>
+                    <h5>Total Astrologers</h5>
+                    <h2>{dashboard.totalAstrologer}</h2>
+                </div>
+            </div>
         </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-star fa-3x mb-3 text-warning"></i>
+                    <h5>Total Services</h5>
+                    <h2>{dashboard.totalService}</h2>
+                </div>
+            </div>
         </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-calendar fa-3x mb-3 text-info"></i>
+                    <h5>Total Appointments</h5>
+                    <h2>{dashboard.totalAppointment}</h2>
+                </div>
+            </div>
         </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-clock fa-3x mb-3 text-warning"></i>
+                    <h5>Pending</h5>
+                    <h2>{dashboard.totalpendingappointment}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-check-circle fa-3x mb-3 text-primary"></i>
+                    <h5>Confirmed</h5>
+                    <h2>{dashboard.totalconfirmedappointment}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-check-double fa-3x mb-3 text-success"></i>
+                    <h5>Completed</h5>
+                    <h2>{dashboard.totalcompletedppointment}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div className="col-md-3 mb-4">
+            <div className="card shadow border-0 text-center">
+                <div className="card-body">
+                    <i className="fa fa-times-circle fa-3x mb-3 text-danger"></i>
+                    <h5>Cancelled</h5>
+                    <h2>{dashboard.totalcancelledappointment}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
     </>
     )
 }

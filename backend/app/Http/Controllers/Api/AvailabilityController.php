@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Availability;
+use App\Models\User;
+
 
 class AvailabilityController extends Controller
 {
@@ -240,6 +242,35 @@ class AvailabilityController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Slot deleted successfully'
+        ],200);
+    }
+	
+	public function slotList($id)
+    {
+		$astrocheck = User::where('id',$id)->where('role','astrologer')->first();
+		if(!$astrocheck){
+			return response()->json([
+                'status' => false,
+                'message' => 'Astrologer not found'
+            ],403);
+		}
+        $availability = Availability::with(
+                            'astrologer'
+                        )                
+				->where('astrologer_id',$id)
+                ->where('is_booked',0)
+                ->get();
+
+        if($availability->isEmpty()){
+            return response()->json([
+                'status' => false,
+                'message' => 'Slots not found'
+            ],404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $availability
         ],200);
     }
 }

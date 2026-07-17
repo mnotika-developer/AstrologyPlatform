@@ -3,6 +3,8 @@ import api from "../services/api";
 import { Navigate, useNavigate } from "react-router-dom";
 import { getEditAppointmentRoute, getUser } from "../helper/auth";
 import Button from "../components/Button";
+import ReactQuill from "react-quill-new";
+import 'react-quill-new/dist/quill.snow.css';
 
 function AppointmentList(){
 
@@ -15,7 +17,9 @@ function AppointmentList(){
     const [astrologers,setAstrologers] = useState([]);
     const [selectedAstrologer,setSelectedAstrologer] = useState('');
     const [notesModal,showNotesModal]=useState(false)
+    const [vnotesModal,showVNotesModal]=useState(false)
     const [AppointmentNotes, setAppointmentNotes]=useState('')
+    const [CAppointmentNotes, setCAppointmentNotes]=useState('')
     const navigate = useNavigate();
 
     const setAstrologer =async ()=>{
@@ -99,14 +103,37 @@ function AppointmentList(){
         const res=await api.put(`/appointments/${selectedAppointment}/notes`,{
             "notes":AppointmentNotes
         })
+        await getAppointment();
         showNotesModal(false);
+    }
+    const openViewNotesModal=(appointmentid,appointmentnotes)=>{
+        setCAppointmentNotes(appointmentnotes);
+        showVNotesModal(true);
     }
     const appointmentdetail = appointList.map((appointment,index)=>(
         <tr key={appointment.id}>
             <td>{index + 1}</td>
             {user.role !== 'customer' && <td>{appointment.user.name}</td>}
             <td>{appointment.service.title}</td>
-            <td>{appointment.customer_notes}</td>
+            <td style={{maxWidth:'250px'}}>
+                <div
+                    style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                    }}
+                    dangerouslySetInnerHTML={{
+                        __html: appointment.customer_notes
+                    }}
+                />
+                <Button
+                    className="btn-sm mt-2"
+                    onClick={() => openViewNotesModal(appointment.id,appointment.customer_notes)}
+                >
+                    View More
+                </Button>
+            </td>
             <td>{appointment.appointment_date}</td>
             <td>{appointment.appointment_time}</td>
             {user.role == 'admin' && <td>{appointment.astrologer? appointment.astrologer.name: 'Not Assigned'} &nbsp;<Button onClick={()=>openAssignedModal(appointment.id,appointment.astrologer_id)}>Assign</Button></td>}
@@ -258,12 +285,12 @@ function AppointmentList(){
             </div>
 
             <div className="modal-body">
-                <textarea className="form-control" rows={5} cols={5} required
-                onChange={(e)=>setAppointmentNotes(e.target.value)}
-                >
-                {AppointmentNotes}
-                </textarea>
-
+                    <ReactQuill
+                        className="editor"
+                        theme="snow"
+                        value={AppointmentNotes}
+                        onChange={setAppointmentNotes}
+                    />
             </div>
 
             <div className="modal-footer">
@@ -280,6 +307,46 @@ function AppointmentList(){
                     onClick={setNotes}
                 >
                     Submit
+                </Button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+)}
+{vnotesModal && (
+    <div className="modal fade show d-block">
+    <div className="modal-dialog">
+        <div className="modal-content">
+
+            <div className="modal-header">
+                <h5 className="modal-title">
+                    Your Note
+                </h5>
+
+                <button
+                    className="btn-close"
+                    onClick={() => showVNotesModal(false)}
+                ></button>
+            </div>
+
+            <div className="modal-body">
+                    <ReactQuill
+                        className="editor"
+                        theme="snow"
+                        value={CAppointmentNotes}
+                        onChange={setCAppointmentNotes}
+                    />
+            </div>
+
+            <div className="modal-footer">
+
+                <Button
+                    className="btn-secondary"
+                    onClick={() => showVNotesModal(false)}
+                >
+                    Close
                 </Button>
 
             </div>

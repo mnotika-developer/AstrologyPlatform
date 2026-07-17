@@ -17,29 +17,78 @@ function AstroDashboard(){
     if(loading){
         return "Appointments Loading.."
     }
-    return (
-<div className="container-fluid">
-        <h2 className="mb-4">Admin Dashboard</h2>
+   return (
+    <div className="container-fluid">
 
-        <div className="col-md-12 mb-4">
+        <h2 className="mb-4 dark-title">
+            Welcome, {user.name}
+        </h2>
 
-    <div className="card shadow ">
+        <div className="row">
 
-        <div className="card-body">
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-calendar fa-3x text-primary mb-3"></i>
+                        <h6>Total Appointments</h6>
+                        <h2>{dashboard.totalAppointment || 0}</h2>
+                    </div>
+                </div>
+            </div>
 
-        <p>Total Appointments : {dashboard.totalAppointment}</p>
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-clock fa-3x text-warning mb-3"></i>
+                        <h6>Pending</h6>
+                        <h2>{dashboard.totalpendingappointment || 0}</h2>
+                    </div>
+                </div>
+            </div>
 
-        <p>Pending : {dashboard.totalpendingappointment}</p>
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-check-circle fa-3x text-info mb-3"></i>
+                        <h6>Confirmed</h6>
+                        <h2>{dashboard.totalconfirmedappointment || 0}</h2>
+                    </div>
+                </div>
+            </div>
 
-        <p>Confirmed : {dashboard.totalconfirmedappointment}</p>
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-check-double fa-3x text-success mb-3"></i>
+                        <h6>Completed</h6>
+                        <h2>{dashboard.totalcompletedappointment || 0}</h2>
+                    </div>
+                </div>
+            </div>
 
-        <p>Completed : {dashboard.totalcompletedppointment}</p>
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-times-circle fa-3x text-danger mb-3"></i>
+                        <h6>Cancelled</h6>
+                        <h2>{dashboard.totalcancelledappointment || 0}</h2>
+                    </div>
+                </div>
+            </div>
 
-        <p>Cancelled : {dashboard.totalcancelledappointment}</p>
+            <div className="col-md-4 mb-4">
+                <div className="card shadow border-0 dashboard-card text-center h-100">
+                    <div className="card-body">
+                        <i className="fa fa-calendar-check fa-3x text-success mb-3"></i>
+                        <h6>Available Slots</h6>
+                        <h2>{dashboard.totalAvailableSlots || 0}</h2>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        </div>
-        </div>
-        </div>
-    )
+
+    </div>
+)
 }
 export default AstroDashboard;

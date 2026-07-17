@@ -7,37 +7,79 @@ import Button from "../components/Button"
 
 function EditAppointment(){
     const [services,setService]=useState([])
+    const [astrologers,setAstrologer] = useState([]);
+    const [slots,setSlots] = useState([]);
     const [formData,setFormdata]=useState({
-		"service_id":"",
-		"meeting_type":"",
-		"appointment_date":"",
-		"appointment_time":"",
-		"customer_notes":""
-
+		service_id:"",
+        astrologer_id:"",
+        slot_id:"",
+        meeting_type:"",
+        customer_notes:""
     })
     const user = getUser();
     const { id } = useParams()
     const navigate = useNavigate()
+
+    const getSlots = async (astroid) => {
+    try{
+        const res = await api.get(`/slots/available/${astroid}`);
+        setSlots(res.data.data);
+        }
+        catch(err){
+            setSlots([]);
+        }
+    }
+    const getAstrologers = async ()=>{
+    const res = await api.get('/astrologers');
+    setAstrologer(res.data.data);
+} 
     const getAppointment = async (e)=>{
         const res = await api.get(`/appointments/${id}`)
         setFormdata({
-            "service_id":res.data.data.service_id,
-            "meeting_type":res.data.data.meeting_type,
-            "appointment_date":res.data.data.appointment_date,
-            "appointment_time":res.data.data.appointment_time,
-            "customer_notes":res.data.data.customer_notes
+            service_id:res.data.data.service_id,
+            astrologer_id:res.data.data.astrologer_id,
+            slot_id:res.data.data.availability_id,
+            meeting_type:res.data.data.meeting_type,
+            customer_notes:res.data.data.customer_notes
         });
+        if(res.data.data.astrologer_id){
+            await getSlots(res.data.data.astrologer_id);
+        }
        // console.log(res.data.data)
     }
     const servicedata=async (e)=>{
         const res = await api.get("/services")
         setService(res.data.services)
     }
-    const handleChange=(e)=>{
-        setFormdata({
-            ...formData,[e.target.name]:e.target.value
-        })
+    const handleChange = (e)=>{
+
+    setFormdata({
+        ...formData,
+        [e.target.name]:e.target.value
+    });
+
+    if(e.target.name === 'astrologer_id'){
+        getSlots(e.target.value);
+
+        setFormdata(prev=>({
+            ...prev,
+            astrologer_id:e.target.value,
+            slot_id:"",
+        }));
     }
+
+    if(e.target.name === 'slot_id'){
+        const slotid = e.target.value;
+        (async ()=>{
+            const res = await api.get(`/slots/${slotid}`);
+            setFormdata(prev=>({
+                ...prev,
+                slot_id:slotid,
+            }));
+
+        })();
+    }
+}
     const handleSubmit=async (e)=>{
         e.preventDefault();
         const res =await api.put(`/appointments/${id}`,formData)
@@ -45,6 +87,7 @@ function EditAppointment(){
     }
     useEffect(()=>{
         servicedata();
+        getAstrologers();
         getAppointment();
     },[])
 
@@ -71,6 +114,47 @@ function EditAppointment(){
         </select>
 
         <br /><br />
+        <label className="d-block text-start">
+    Astrologer
+</label>
+
+<select
+    className="form-control"
+    name="astrologer_id"
+    value={formData.astrologer_id}
+    onChange={handleChange}
+>
+    <option value="">
+        Select Astrologer
+    </option>
+
+    {astrologers.map((astro)=>(
+        <option key={astro.id} value={astro.id}>
+            {astro.name}
+        </option>
+    ))}
+</select>
+
+<label className="d-block text-start">
+    Slot
+</label>
+
+<select
+    className="form-control"
+    name="slot_id"
+    value={formData.slot_id}
+    onChange={handleChange}
+>
+    <option value="">
+        Select Slot
+    </option>
+
+    {slots.length>0 && slots.map((slot)=>(
+        <option key={slot.id} value={slot.id}>
+            {slot.available_date} | {slot.start_time} - {slot.end_time}
+        </option>
+    ))}
+</select>
 
         <label className="form-label d-block text-start">Meeting Type</label><br />
         <select
@@ -84,23 +168,7 @@ function EditAppointment(){
             <option value="offline">Offline</option>
         </select>
 
-        <br /><br />
-        <Input
-            type="date"
-            name="appointment_date"
-            value={formData.appointment_date}
-            label="Appointment Date"
-            onChange={handleChange}
-        />
-
-        <br /><br />
-        <Input
-            type="time"
-            name="appointment_time"
-            value={formData.appointment_time}
-            label="Appointment Time"
-            onChange={handleChange}
-        />
+       
         <br /><br />
 
         <label className="form-label d-block text-start">Customer Notes</label><br />

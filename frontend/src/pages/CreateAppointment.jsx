@@ -3,24 +3,44 @@ import api from "../services/api"
 import { useNavigate } from "react-router-dom"
 import Button from "../components/Button"
 import Input from "../components/Input"
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 
 function CreateAppointment(){
     const [formData,setFormData]=useState({
 		"service_id":"",
+        "astrologer_id":"",
+        "slot_id":"",
 		"meeting_type":"",
-		"appointment_date":"",
-		"appointment_time":"",
 		"customer_notes":""
 
     })
     const [users,setUsers]=useState([])
     const [services,setServices]=useState([])
+    const [astrologers,setAstrologer]=useState([])
+    const [slots,setSlots]=useState([])
     const navigate = useNavigate()
 
     const handleChange=(e)=>{
         setFormData({
             ...formData,[e.target.name]:e.target.value
         })
+        console.log(e.target.value);
+        if(e.target.name=='astrologer_id'){
+            setSlots([]);
+
+            const astroid = e.target.value;
+            (async ()=>{
+                const res = await api.get(`/slots/available/${astroid}`);
+                setSlots(res.data.data);
+            })();
+        }
+        if(e.target.name=='slot_id'){
+            const slotid = e.target.value;
+            (async ()=>{
+                const res = await api.get(`/slots/${slotid}`);
+            })();
+        }
     }
     const getusers=async (e)=>{
         const userdata = await api.get('/userlist');
@@ -32,15 +52,27 @@ function CreateAppointment(){
         console.log(services)
         setServices(services.data.services);
     }
+    const getastrologers=async ()=>{
+        const res = await api.get('/astrologers');
+        setAstrologer(res.data.data);
+    }
+    
     const handleSubmit=async (e)=>{
         e.preventDefault();
         const res = await api.post('/appointments',formData)
         console.log(res.data);
-        navigate('/appointments')
+        navigate('/customer/appointments')
     }
+    const handleEditorChange = (content) => {
+        setFormData({
+            ...formData,
+            customer_notes: content
+        });
+    };
     useEffect(()=>{
         getusers();
         getservices();
+        getastrologers();
     },[])
     return(
       <div className="container">
@@ -62,9 +94,35 @@ function CreateAppointment(){
             {services.map((service)=>(
                 <option key={service.id} value={service.id}>{service.title}</option>
             ))}
+        </select><br></br>
+        <label className="d-block text-start">Astrologer</label><br />
+        <select
+            name="astrologer_id"
+            value={formData.astrologer_id}
+            onChange={handleChange}
+            class="form-control"
+            required
+        >
+            <option value="">Select Astrologer</option>
+            {astrologers.map((astro)=>(
+                <option key={astro.id} value={astro.id}>{astro.name}</option>
+            ))}
         </select>
 
         <br /><br />
+        <label className="d-block text-start">Select Slot</label><br />
+        <select
+            name="slot_id"
+            value={formData.availability_id}
+            onChange={handleChange}
+            class="form-control"
+            required
+        >
+            <option value="">Select Slot</option>
+            {slots !='' && slots.map((slot)=>(
+                <option key={slot.id} value={slot.id}>{slot.available_date} {slot.start_time}-{slot.end_time}</option>
+            ))}
+        </select>
 
         <label className="d-block text-start">Meeting Type</label><br />
         <select
@@ -81,37 +139,10 @@ function CreateAppointment(){
 
         <br /><br />
 
-        <Input
-            type="date"
-            name="appointment_date"
-            value={formData.appointment_date}
-            label="Appointment Date"
-            onChange={handleChange}
-            required
-        />
-
-        <br /><br />
-
-        <Input
-            type="time"
-            name="appointment_time"
-            value={formData.appointment_time}
-            label="Appointment Time"
-            onChange={handleChange}
-            required
-        />
-
-        <br /><br />
-
         <label className="d-block text-start">Customer Notes</label><br />
-        <textarea
-            name="customer_notes"
-            rows="4"
-            cols="40"
-            value={formData.customer_notes}
-            onChange={handleChange}
-            class="form-control"
-        ></textarea>
+        <div className="editorContent">
+          <ReactQuill className="editor" theme="snow" value={formData.customer_notes} onChange={handleEditorChange} />
+        </div>
 
         <br /><br />
 

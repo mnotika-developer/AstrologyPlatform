@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Availability;
 
 class AppointmentController extends Controller
 {
@@ -37,9 +38,9 @@ class AppointmentController extends Controller
 	public function store(Request $request){
 		$validator = Validator::make($request->all(),[
 			"service_id"=>"required|exists:services,id",
+			"astrologer_id"=>"required|exists:users,id",
+			"slot_id"=>"required|exists:availabilities,id",
 			'meeting_type' => 'required|in:online,offline',
-			"appointment_date"=>"required",
-			"appointment_time"=>"required",
 			"customer_notes" => "nullable|string"
 		]);
 		if($validator->fails()){
@@ -48,15 +49,26 @@ class AppointmentController extends Controller
 				"message"=>$validator->errors()
 			],422);
 		}
+		$slotinfo = Availability::where('id',$request->slot_id)->first();
+		if(empty($slotinfo)){
+			return response()->json([
+				"status"=>false,
+				"message"=>'No Slot found'
+			],403);
+		}
 		$appnt = Appointment::create([
 			'user_id' => Auth::id(),
 			'service_id' => $request->service_id,
-			'appointment_date' => $request->appointment_date,
-			'appointment_time' => $request->appointment_time,
+			'astrologer_id' => $request->astrologer_id,
+			'availability_id' => $request->slot_id,
+			'appointment_date' => $slotinfo->available_date,
+			'appointment_time' => $slotinfo->start_time,
 			'meeting_type' => $request->meeting_type,
 			'customer_notes' => $request->customer_notes,
 		]);
-		
+		$slotinfo->update([
+			"is_booked"=>1,
+		]);
 		return response()->json([
 			"status"=>true,
 			"message"=>"Appointment added successfully"
@@ -88,8 +100,8 @@ class AppointmentController extends Controller
 		try{
 		$validate = Validator::make($request->all(),[
 			"service_id"=>"required|exists:services,id",
-			"appointment_date"=>"required|date",
-			"appointment_time"=>"required",
+			"astrologer_id"=>"required",
+			"slot_id"=>"required",
 			"customer_notes" => "nullable|string",
 			'meeting_type' => 'required|in:online,offline',
 		]);
@@ -113,8 +125,8 @@ class AppointmentController extends Controller
 		}
 		$appoint->update([
 			'service_id' => $request->service_id,
-			'appointment_date' => $request->appointment_date,
-			'appointment_time' => $request->appointment_time,
+			'astrologer_id' => $request->astrologer_id,
+			'availability_id' => $request->slot_id,
 			'meeting_type' => $request->meeting_type,
 			'customer_notes' => $request->customer_notes,
 		]);

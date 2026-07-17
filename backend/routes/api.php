@@ -72,3 +72,5 @@ Route::middleware('auth:sanctum')->get('/slots/{id}', [AvailabilityController::c
 Route::middleware('auth:sanctum')->put('/slots/{id}', [AvailabilityController::class,'update']);
 
 Route::middleware('auth:sanctum')->delete('/slots/{id}', [AvailabilityController::class,'destroy']);
+
+Route::middleware('auth:sanctum')->get('/slots/available/{id}', [AvailabilityController::class,'slotList']);
