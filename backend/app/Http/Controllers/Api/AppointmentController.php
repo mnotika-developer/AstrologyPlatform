@@ -14,9 +14,13 @@ class AppointmentController extends Controller
 		if (Auth::user()->role === 'admin') {
 			$appointlist = Appointment::with('user','service','astrologer')->get();
 		}
+		elseif (Auth::user()->role === 'astrologer') {
+			$appointlist = Appointment::with('user','service','astrologer')->where('astrologer_id',Auth::id())->get();
+		}
 		else{
 			$appointlist = Appointment::with('user','service','astrologer')->where('user_id',Auth::id())->get();
 		}
+
 		if($appointlist->isEmpty()){
 			return response()->json([
 				"status"=>false,
@@ -52,6 +56,7 @@ class AppointmentController extends Controller
 			'meeting_type' => $request->meeting_type,
 			'customer_notes' => $request->customer_notes,
 		]);
+		
 		return response()->json([
 			"status"=>true,
 			"message"=>"Appointment added successfully"
@@ -129,7 +134,7 @@ class AppointmentController extends Controller
 	}
 	
 	public function updateStatus($id,Request $request){
-		if (Auth::user()->role !== 'admin') {
+		if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'astrologer') {
 			return response()->json([
 				"status" => false,
 				"message" => "Unauthorized"
@@ -203,6 +208,42 @@ class AppointmentController extends Controller
 		return response()->json([
 			"status"=>true,
 			"message"=>"Astrologer assigned successfully",
+			"data"=>$appoint
+		],200);
+	}
+	
+	public function updateNotes($id,Request $request){
+		if (Auth::user()->role !== 'astrologer') {
+			return response()->json([
+				"status" => false,
+				"message" => "Unauthorized"
+			], 403);
+		}
+
+		$appoint = Appointment::find($id);
+
+		if (!$appoint) {
+			return response()->json([
+				"status" => false,
+				"message" => "Appointment not found"
+			], 404);
+		}
+		
+		$validate = Validator::make($request->all(),[
+			"notes"=>"required|string"
+		]);
+		if($validate->fails()){
+			return response()->json([
+				"status"=>false,
+				"message"=>$validate->errors()
+			],422);
+		}
+		$appoint->update([
+			'astrologer_notes' => $request->notes,
+		]);
+		return response()->json([
+			"status"=>true,
+			"message"=>"Appointment notes updated successfully",
 			"data"=>$appoint
 		],200);
 	}

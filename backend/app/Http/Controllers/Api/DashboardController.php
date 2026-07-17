@@ -49,11 +49,11 @@ class DashboardController extends Controller
 			);
 		}
 		elseif(Auth::user()->role=='astrologer'){
-			$totelAppointment = Appointment::where('user_id',Auth::id())->count();
-			$totalpendingappointment = Appointment::where('status','pending')->where('user_id',Auth::id())->count();
-			$totalcompletedppointment = Appointment::where('status','completed')->where('user_id',Auth::id())->count();
-			$totalconfirmedappointment = Appointment::where('status','confirmed')->where('user_id',Auth::id())->count();
-			$totalcancelledappointment = Appointment::where('status','cancelled')->where('user_id',Auth::id())->count();
+			$totelAppointment = Appointment::where('astrologer_id',Auth::id())->count();
+			$totalpendingappointment = Appointment::where('status','pending')->where('astrologer_id',Auth::id())->count();
+			$totalcompletedppointment = Appointment::where('status','completed')->where('astrologer_id',Auth::id())->count();
+			$totalconfirmedappointment = Appointment::where('status','confirmed')->where('astrologer_id',Auth::id())->count();
+			$totalcancelledappointment = Appointment::where('status','cancelled')->where('astrologer_id',Auth::id())->count();
 			$result = array(
 			   'totalAppointment'=>$totelAppointment,
 			   'totalpendingappointment'=>$totalpendingappointment,

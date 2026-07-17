@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ServiceController as ServiceController;
 use App\Http\Controllers\Api\AppointmentController as AppointmentController;
 use App\Http\Controllers\Api\DashboardController as DashboardController;
 use App\Http\Controllers\Api\UserController as UserController;
+use App\Http\Controllers\Api\AvailabilityController as AvailabilityController;
 
 Route::post('/register',[UserAuthController::class,'register']);
 Route::post('/login',[UserAuthController::class,'login']);
@@ -40,6 +41,8 @@ Route::middleware('auth:sanctum')->put('/appointments/{id}/astrologer', [Appoint
 
 Route::middleware('auth:sanctum')->delete('/appointments/{id}', [AppointmentController::class,'destroy']);
 
+Route::middleware('auth:sanctum')->put('/appointments/{id}/notes', [AppointmentController::class,'updateNotes']);
+
 Route::middleware('auth:sanctum')->get('/dashboard',[DashboardController::class,'index']);
 Route::middleware('auth:sanctum')->get('/profile',[DashboardController::class,'profile']);
 Route::middleware('auth:sanctum')->put('/profile',[DashboardController::class,'updateprofile']);
@@ -59,3 +62,13 @@ Route::middleware('auth:sanctum')->put('/users/{id}', [UserController::class,'up
 Route::middleware('auth:sanctum')->delete('/users/{id}', [UserController::class,'destroy']);
 
 Route::middleware('auth:sanctum')->get('/astrologers',[UserController::class,'astrologers']);
+
+Route::middleware('auth:sanctum')->get('/slots', [AvailabilityController::class,'index']);
+
+Route::middleware('auth:sanctum')->post('/slots', [AvailabilityController::class,'store']);
+
+Route::middleware('auth:sanctum')->get('/slots/{id}', [AvailabilityController::class,'show']);
+
+Route::middleware('auth:sanctum')->put('/slots/{id}', [AvailabilityController::class,'update']);
+
+Route::middleware('auth:sanctum')->delete('/slots/{id}', [AvailabilityController::class,'destroy']);

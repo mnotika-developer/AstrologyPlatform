@@ -49,4 +49,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+	
+	public function availabilitySlots()
+	{
+		return $this->hasMany(
+			Availability::class,
+			'astrologer_id'
+		);
+	}
 }
