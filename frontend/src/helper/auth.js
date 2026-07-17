@@ -50,7 +50,8 @@ export const getDashboardRoute=()=>{
     else if(user.role==='admin'){
         return "/admin/dashboard";
     }
-    else if(user.role==='astro'){
+    else if(user.role==='astrologer'){
         return "/astro/dashboard";
     }
+    return '/';
 }

@@ -14,6 +14,8 @@ function AppointmentList(){
     const [selectedAppointment,setSelectedAppointment] = useState(null);
     const [astrologers,setAstrologers] = useState([]);
     const [selectedAstrologer,setSelectedAstrologer] = useState('');
+    const [notesModal,showNotesModal]=useState(false)
+    const [AppointmentNotes, setAppointmentNotes]=useState('')
     const navigate = useNavigate();
 
     const setAstrologer =async ()=>{
@@ -60,6 +62,10 @@ function AppointmentList(){
         setAppointStatus(id);
         setSelectStatus(status);
     }
+    const showStatus= async (id)=>{
+        setAppointStatus(null);
+        setSelectStatus('');
+    }
     const updateStatus= async (id)=>{
         const res = await api.put(`/appointments/${id}/status`, {
             status:appointSelectStatus 
@@ -77,44 +83,65 @@ function AppointmentList(){
         //await getAppointment();
     }
     const user = getUser();
+    const openNotesModal=(appointmentid,appointmentnotes)=>{
+        setSelectedAppointment(appointmentid);
+        showNotesModal(true);
+        setAppointmentNotes(appointmentnotes);
+        console.log(AppointmentNotes);
+    }
     const openAssignedModal = (appointmentid,astroid)=>{
         setSelectedAppointment(appointmentid);
         getAstrologer();
         setShowModal(true);
         setSelectedAstrologer(astroid);
     }
+    const setNotes =async ()=>{
+        const res=await api.put(`/appointments/${selectedAppointment}/notes`,{
+            "notes":AppointmentNotes
+        })
+        showNotesModal(false);
+    }
     const appointmentdetail = appointList.map((appointment,index)=>(
         <tr key={appointment.id}>
             <td>{index + 1}</td>
-            <td>{appointment.user.name}</td>
+            {user.role !== 'customer' && <td>{appointment.user.name}</td>}
             <td>{appointment.service.title}</td>
+            <td>{appointment.customer_notes}</td>
             <td>{appointment.appointment_date}</td>
             <td>{appointment.appointment_time}</td>
-            <td>{appointment.customer_notes}</td>
-            <td>{appointment.astrologer? appointment.astrologer.name: 'Not Assigned'} &nbsp;<Button onClick={()=>openAssignedModal(appointment.id,appointment.astrologer_id)}>Assign</Button></td>
+            {user.role == 'admin' && <td>{appointment.astrologer? appointment.astrologer.name: 'Not Assigned'} &nbsp;<Button onClick={()=>openAssignedModal(appointment.id,appointment.astrologer_id)}>Assign</Button></td>}
             <td className="mb-3">Appointment Status:
                 {appointStatus===appointment.id ?
                 (
                     <select className="form-control" value={appointSelectStatus} onChange={(e)=>setSelectStatus(e.target.value)}>
-                        <option value="pending">Pending</option>
+                        <option value="pending" disabled={user?.role!=='admin'}>Pending</option>
                         <option value="confirmed">Confirm</option>
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
                     </select>)
                 :
-                 (appointment.status)
+                 (appointment.status.toUpperCase())
                 }
             
-            {user?.role==='admin' && (
+            {user?.role==='admin' || user?.role==='astrologer' && (
     appointStatus===appointment.id ?(
-        <Button className="btn-success" onClick={()=>updateStatus(appointment.id)}>Save</Button>
+        <>
+        <Button className="btn-success mb-3" onClick={()=>updateStatus(appointment.id)}>Save</Button> 
+        &nbsp;<Button className="btn-info mb-3" onClick={()=>showStatus(appointment.id)}>Cancel</Button>
+        </>
     ):<Button className="btn-info" style={{color:'#fff'}} onClick={()=>handleEdit(appointment.id,appointment.status)}>Edit Status</Button>
 )}
             </td>
-           <td>
-            <Button onClick={()=>navigate(getEditAppointmentRoute(appointment.id))}>Edit</Button> 
-            <Button onClick={()=>handleDelete(appointment.id)}>Delete</Button>
+            {user?.role!=='customer' && ( <td>
+                {user?.role==='admin' && (
+                <><Button onClick={()=>navigate(getEditAppointmentRoute(appointment.id))}>Edit</Button> 
+                <Button onClick={()=>handleDelete(appointment.id)}>Delete</Button></>
+                )}
+                 {user?.role==='astrologer' && (
+                <Button onClick={()=>openNotesModal(appointment.id,appointment.astrologer_notes)}>Your Note</Button>
+                )}
             </td>
+            )}
         </tr>
     ));
     if (loading) {
@@ -129,14 +156,18 @@ function AppointmentList(){
                 <thead className="table-dark">
                 <tr>
                     <th>#</th>
+                    {user.role !== 'customer' && 
                     <th>Customer</th>
+                    }
                     <th>Service</th>
                     <th>Notes</th>
                     <th>Date</th>
                     <th>Time</th>
+                    {user.role == 'admin' && 
                     <th>Assign Astrologer</th>
+                    }
                     <th>Status</th>
-                    <th width="180">Action</th>
+                    {user?.role!=='customer' && (<th>Action</th>)}
                 </tr>
             </thead>
             <tbody>
@@ -201,6 +232,54 @@ function AppointmentList(){
                     onClick={setAstrologer}
                 >
                     Assign
+                </Button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+)}
+
+{notesModal && (
+    <div className="modal fade show d-block">
+    <div className="modal-dialog">
+        <div className="modal-content">
+
+            <div className="modal-header">
+                <h5 className="modal-title">
+                    Add your note
+                </h5>
+
+                <button
+                    className="btn-close"
+                    onClick={() => showNotesModal(false)}
+                ></button>
+            </div>
+
+            <div className="modal-body">
+                <textarea className="form-control" rows={5} cols={5} required
+                onChange={(e)=>setAppointmentNotes(e.target.value)}
+                >
+                {AppointmentNotes}
+                </textarea>
+
+            </div>
+
+            <div className="modal-footer">
+
+                <Button
+                    className="btn-secondary"
+                    onClick={() => showNotesModal(false)}
+                >
+                    Close
+                </Button>
+
+                <Button
+                    className="btn-primary"
+                    onClick={setNotes}
+                >
+                    Submit
                 </Button>
 
             </div>

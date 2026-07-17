@@ -32,4 +32,11 @@ class Appointment extends Model
 	{
 		return $this->belongsTo(User::class,'astrologer_id');
 	}
+	public function availability()
+	{
+		return $this->belongsTo(
+			Availability::class,
+			'availability_id'
+		);
+	}
 }

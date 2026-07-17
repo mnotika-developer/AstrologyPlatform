@@ -20,4 +20,11 @@ class Availability extends Model
 	{
 		return $this->belongsTo(User::class,'astrologer_id');
 	}
+	public function appointment()
+	{
+		return $this->hasOne(
+			Appointment::class,
+			'availability_id'
+		);
+	}
 }

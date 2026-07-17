@@ -18,11 +18,15 @@ import CustomerDashboard from './pages/CustomerDashboard.jsx'
 import AstroDashboard from './pages/AstroDashboard.jsx'
 import CustomerLayouts from './layouts/CustomerLayouts.jsx'
 import AdminLayouts from './layouts/AdminLayouts.jsx'
+import AstrologerLayouts from './layouts/AstrologerLayouts.jsx'
 import Profile from './pages/Profile.jsx'
 import ChangePassword from './pages/ChangePassword.jsx'
 import CustomerList from './pages/CustomerList.jsx'
 import EditCustomer from './pages/EditCustomer.jsx'
 import AddCustomer from './pages/AddCustomer.jsx'
+import SlotList from './pages/SlotList.jsx'
+import CreateSlot from './pages/CreateSlot.jsx'
+import EditSlot from './pages/EditSlot.jsx'
 
 function App() {
   return (
@@ -31,11 +35,30 @@ function App() {
       <Route path="/" element={<Login/>}></Route>
       <Route path="/register" element={<Register/>}></Route>
       
-      <Route path="/astro/dashboard" element={
-        <ProtectedRoute role="astro">
-          <AstroDashboard/>
+      <Route element={
+        <ProtectedRoute role="astrologer">
+          <AstrologerLayouts />
         </ProtectedRoute>
-      }></Route>
+      }>
+        <Route path="/astro/dashboard" element={
+            <AstroDashboard/>
+        }/>
+        <Route path="/astro/appointments" element={
+            <AppointmentList/>
+        }/>
+        <Route path="/astro/slots" element={
+            <SlotList/>
+        }/>
+       <Route path="/astro/addslot" element={
+            <CreateSlot/>
+        }/>
+         <Route path="/astro/slot/edit/:id" element={
+            <EditSlot/>
+        }/>
+        <Route path="/astro/profile" element={
+            <Profile/>
+        }/>
+      </Route>
       <Route element={
         <ProtectedRoute  role="admin">
             <AdminLayouts/>
