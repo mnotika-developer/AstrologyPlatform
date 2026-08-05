@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController as UserAuthController;
 use App\Http\Controllers\Api\ServiceController as ServiceController;
@@ -7,6 +8,8 @@ use App\Http\Controllers\Api\AppointmentController as AppointmentController;
 use App\Http\Controllers\Api\DashboardController as DashboardController;
 use App\Http\Controllers\Api\UserController as UserController;
 use App\Http\Controllers\Api\AvailabilityController as AvailabilityController;
+use App\Http\Controllers\API\BirthProfileController as BirthProfileController;
+use App\Http\Controllers\API\AIHoroscopeController as AIHoroscopeController;
 
 Route::post('/register',[UserAuthController::class,'register']);
 Route::post('/login',[UserAuthController::class,'login']);
@@ -74,3 +77,26 @@ Route::middleware('auth:sanctum')->put('/slots/{id}', [AvailabilityController::c
 Route::middleware('auth:sanctum')->delete('/slots/{id}', [AvailabilityController::class,'destroy']);
 
 Route::middleware('auth:sanctum')->get('/slots/available/{id}', [AvailabilityController::class,'slotList']);
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/birth-profile', [BirthProfileController::class, 'plist']);
+	
+	Route::get('/birth-profile/{id}', [BirthProfileController::class, 'show']);
+
+    Route::post('/birth-profile', [BirthProfileController::class, 'store']);
+
+    Route::put('/birth-profile/{id}', [BirthProfileController::class, 'update']);
+
+});
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/ai/horoscope', [AIHoroscopeController::class, 'generate']);
+
+    Route::get('/ai/horoscopes', [AIHoroscopeController::class, 'history']);
+
+    Route::get('/ai/horoscopes/{id}', [AIHoroscopeController::class, 'show']);
+	
+	Route::get('/ai/horoscopes/{birthid}', [AIHoroscopeController::class, 'showbyid']);
+
+});

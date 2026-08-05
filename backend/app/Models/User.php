@@ -57,4 +57,9 @@ class User extends Authenticatable
 			'astrologer_id'
 		);
 	}
+	
+	public function birthProfile()
+	{
+		return $this->hasOne(BirthProfile::class);
+	}
 }
