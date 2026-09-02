@@ -27,7 +27,7 @@ class AIService
 	{
 		try {
 
-			$response = Http::timeout(120)
+			$response = Http::timeout(150)
 				->connectTimeout(20)
 				->retry(3, 2000)
 				->post($this->url, [
